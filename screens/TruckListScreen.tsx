@@ -1,12 +1,23 @@
 import { View, Text, StyleSheet } from "react-native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
 import { TruckStatus } from "../types/Truck";
 import { useTrucks } from "../context/TrucksContext";
+import TruckCard from "../components/TruckCard";
+import { TruckStackParamList } from "../navigation/TruckStack";
 
 type Props = {
   status: TruckStatus;
+  navigation: NativeStackNavigationProp<
+    TruckStackParamList,
+    "TruckList"
+  >;
 };
 
-export default function TruckListScreen({ status }: Props) {
+export default function TruckListScreen({
+  status,
+  navigation,
+}: Props) {
   const { trucks } = useTrucks();
 
   const filteredTrucks = trucks.filter(
@@ -18,12 +29,15 @@ export default function TruckListScreen({ status }: Props) {
       <Text style={styles.title}>{status}</Text>
 
       {filteredTrucks.map((truck) => (
-        <View key={truck.id} style={styles.card}>
-          <Text style={styles.plate}>{truck.plateNumber}</Text>
-          <Text>Couleur : {truck.color}</Text>
-          <Text>Carburant : {truck.fuelType}</Text>
-          <Text>Kilométrage : {truck.mileage} km</Text>
-        </View>
+        <TruckCard
+          key={truck.id}
+          truck={truck}
+          onPress={() =>
+            navigation.navigate("TruckDetail", {
+              truckId: truck.id,
+            })
+          }
+        />
       ))}
     </View>
   );
@@ -39,18 +53,5 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
-  },
-
-  card: {
-    padding: 15,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderRadius: 10,
-  },
-
-  plate: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 8,
   },
 });
