@@ -1,48 +1,27 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { View, Text } from "react-native";
+import TruckStack from "./TruckStack";
 
 const Tab = createBottomTabNavigator();
-
-function EnServiceScreen() {
-  return (
-    <View>
-      <Text>En service</Text>
-    </View>
-  );
-}
-
-function AArretScreen() {
-  return (
-    <View>
-      <Text>À l'arrêt</Text>
-    </View>
-  );
-}
-
-function MaintenanceScreen() {
-  return (
-    <View>
-      <Text>En maintenance</Text>
-    </View>
-  );
-}
 
 export default function AppNavigator() {
   return (
     <Tab.Navigator>
       <Tab.Screen
         name="En service"
-        component={EnServiceScreen}
+        component={TruckStack}
+        options={{ title: "En service" }}
       />
 
       <Tab.Screen
         name="À l'arrêt"
-        component={AArretScreen}
+        component={TruckStack}
+        options={{ title: "À l'arrêt" }}
       />
 
       <Tab.Screen
         name="En maintenance"
-        component={MaintenanceScreen}
+        component={TruckStack}
+        options={{ title: "Maintenance" }}
       />
     </Tab.Navigator>
   );
