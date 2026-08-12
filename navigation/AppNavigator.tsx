@@ -3,25 +3,34 @@ import TruckStack from "./TruckStack";
 
 const Tab = createBottomTabNavigator();
 
+function ServiceStack() {
+  return <TruckStack status="En service" />;
+}
+
+function ArretStack() {
+  return <TruckStack status="À l'arrêt" />;
+}
+
+function MaintenanceStack() {
+  return <TruckStack status="En maintenance" />;
+}
+
 export default function AppNavigator() {
   return (
     <Tab.Navigator>
       <Tab.Screen
         name="En service"
-        component={TruckStack}
-        options={{ title: "En service" }}
+        component={ServiceStack}
       />
 
       <Tab.Screen
         name="À l'arrêt"
-        component={TruckStack}
-        options={{ title: "À l'arrêt" }}
+        component={ArretStack}
       />
 
       <Tab.Screen
         name="En maintenance"
-        component={TruckStack}
-        options={{ title: "Maintenance" }}
+        component={MaintenanceStack}
       />
     </Tab.Navigator>
   );

@@ -1,36 +1,23 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { View, Text } from "react-native";
+import TruckListScreen from "../screens/TruckListScreen";
+import { TruckStatus } from "../types/Truck";
+
+type Props = {
+  status: TruckStatus;
+};
 
 const Stack = createNativeStackNavigator();
 
-function TruckList() {
-  return (
-    <View>
-      <Text>Liste des camions</Text>
-    </View>
-  );
-}
-
-function TruckDetail() {
-  return (
-    <View>
-      <Text>Détail du camion</Text>
-    </View>
-  );
-}
-
-export default function TruckStack() {
+export default function TruckStack({ status }: Props) {
   return (
     <Stack.Navigator>
-      <Stack.Screen
-        name="TruckList"
-        component={TruckList}
-        options={{ title: "Camions" }}
-      />
+      <Stack.Screen name="TruckList">
+        {() => <TruckListScreen status={status} />}
+      </Stack.Screen>
 
       <Stack.Screen
         name="TruckDetail"
-        component={TruckDetail}
+        component={() => null}
         options={{ title: "Détail" }}
       />
     </Stack.Navigator>
