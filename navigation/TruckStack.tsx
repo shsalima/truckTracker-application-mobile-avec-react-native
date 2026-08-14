@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import TruckListScreen from "../screens/TruckListScreen";
 import TruckDetailScreen from "../screens/TruckDetailScreen";
 import EditTruckScreen from "../screens/EditTruckScreen";
+import AddTruckScreen from "../screens/AddTruckScreen";
 
 import { TruckStatus } from "../types/Truck";
 
@@ -16,6 +17,8 @@ export type TruckStackParamList = {
   EditTruck: {
     truckId: string;
   };
+
+  AddTruck: undefined;
 };
 
 type Props = {
@@ -28,6 +31,7 @@ const Stack =
 export default function TruckStack({ status }: Props) {
   return (
     <Stack.Navigator>
+
       {/* LISTE DES CAMIONS */}
       <Stack.Screen
         name="TruckList"
@@ -60,6 +64,16 @@ export default function TruckStack({ status }: Props) {
           title: "Modifier le camion",
         }}
       />
+
+      {/* AJOUTER UN CAMION */}
+      <Stack.Screen
+        name="AddTruck"
+        component={AddTruckScreen}
+        options={{
+          title: "Ajouter un camion",
+        }}
+      />
+
     </Stack.Navigator>
   );
 }
