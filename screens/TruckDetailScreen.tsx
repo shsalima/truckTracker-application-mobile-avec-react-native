@@ -6,6 +6,7 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
+
 import { Ionicons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
@@ -162,9 +163,14 @@ export default function TruckDetailScreen({
 
         {/* ACTIONS */}
         <View style={styles.actions}>
+          {/* MODIFIER */}
           <TouchableOpacity
             style={styles.editButton}
-            onPress={() => {}}
+            onPress={() =>
+              navigation.navigate("EditTruck", {
+                truckId: truck.id,
+              })
+            }
           >
             <Ionicons
               name="create-outline"
@@ -177,6 +183,7 @@ export default function TruckDetailScreen({
             </Text>
           </TouchableOpacity>
 
+          {/* SUPPRIMER */}
           <TouchableOpacity
             style={styles.deleteButton}
             onPress={handleDelete}
@@ -368,7 +375,7 @@ export default function TruckDetailScreen({
           </Text>
         </TouchableOpacity>
 
-        {/* A L'ARRET */}
+        {/* À L'ARRÊT */}
         <TouchableOpacity
           style={[
             styles.statusButton,
@@ -393,7 +400,7 @@ export default function TruckDetailScreen({
           </Text>
         </TouchableOpacity>
 
-        {/* MAINTENANCE */}
+        {/* EN MAINTENANCE */}
         <TouchableOpacity
           style={[
             styles.statusButton,

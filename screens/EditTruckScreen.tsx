@@ -30,15 +30,6 @@ export default function EditTruckScreen({
     (item) => item.id === route.params.truckId
   );
 
-  const [plateNumber, setPlateNumber] = useState("");
-  const [color, setColor] = useState("");
-  const [fuelType, setFuelType] = useState("");
-  const [mileage, setMileage] = useState("");
-  const [nextOilChangeMileage, setNextOilChangeMileage] =
-    useState("");
-  const [status, setStatus] =
-    useState<TruckStatus>("En service");
-
   if (!truck) {
     return (
       <View style={styles.container}>
@@ -48,6 +39,70 @@ export default function EditTruckScreen({
       </View>
     );
   }
+
+  return (
+    <EditTruckForm
+      truck={truck}
+      updateTruck={updateTruck}
+      navigation={navigation}
+    />
+  );
+}
+
+type EditTruckFormProps = {
+  truck: {
+    id: string;
+    plateNumber: string;
+    color: string;
+    fuelType: string;
+    mileage: number;
+    status: TruckStatus;
+    nextOilChangeMileage: number;
+  };
+
+  updateTruck: (
+    id: string,
+    updatedTruck: {
+      plateNumber: string;
+      color: string;
+      fuelType: string;
+      mileage: number;
+      status: TruckStatus;
+      nextOilChangeMileage: number;
+    }
+  ) => void;
+
+  navigation: Props["navigation"];
+};
+
+function EditTruckForm({
+  truck,
+  updateTruck,
+  navigation,
+}: EditTruckFormProps) {
+  const [plateNumber, setPlateNumber] = useState(
+    truck.plateNumber
+  );
+
+  const [color, setColor] = useState(
+    truck.color
+  );
+
+  const [fuelType, setFuelType] = useState(
+    truck.fuelType
+  );
+
+  const [mileage, setMileage] = useState(
+    String(truck.mileage)
+  );
+
+  const [nextOilChangeMileage, setNextOilChangeMileage] =
+    useState(
+      String(truck.nextOilChangeMileage)
+    );
+
+  const [status, setStatus] =
+    useState<TruckStatus>(truck.status);
 
   const handleUpdate = () => {
     if (
@@ -82,12 +137,24 @@ export default function EditTruckScreen({
       return;
     }
 
+    if (
+      mileageNumber < 0 ||
+      nextOilNumber < 0
+    ) {
+      Alert.alert(
+        "Erreur",
+        "Le kilométrage ne peut pas être négatif."
+      );
+
+      return;
+    }
+
     updateTruck(truck.id, {
       plateNumber: plateNumber.trim(),
       color: color.trim(),
       fuelType: fuelType.trim(),
       mileage: mileageNumber,
-      status,
+      status: status,
       nextOilChangeMileage: nextOilNumber,
     });
 
@@ -98,6 +165,7 @@ export default function EditTruckScreen({
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
     >
       <Text style={styles.title}>
         Modifier le camion
@@ -112,8 +180,9 @@ export default function EditTruckScreen({
         style={styles.input}
         value={plateNumber}
         onChangeText={setPlateNumber}
-        placeholder={truck.plateNumber}
+        placeholder="Ex : 12345-A-6"
         placeholderTextColor="#64748B"
+        autoCapitalize="characters"
       />
 
       {/* COULEUR */}
@@ -125,7 +194,7 @@ export default function EditTruckScreen({
         style={styles.input}
         value={color}
         onChangeText={setColor}
-        placeholder={truck.color}
+        placeholder="Ex : Blanc"
         placeholderTextColor="#64748B"
       />
 
@@ -138,7 +207,7 @@ export default function EditTruckScreen({
         style={styles.input}
         value={fuelType}
         onChangeText={setFuelType}
-        placeholder={truck.fuelType}
+        placeholder="Ex : Diesel"
         placeholderTextColor="#64748B"
       />
 
@@ -152,7 +221,7 @@ export default function EditTruckScreen({
         value={mileage}
         onChangeText={setMileage}
         keyboardType="numeric"
-        placeholder={String(truck.mileage)}
+        placeholder="Ex : 120000"
         placeholderTextColor="#64748B"
       />
 
@@ -166,9 +235,7 @@ export default function EditTruckScreen({
         value={nextOilChangeMileage}
         onChangeText={setNextOilChangeMileage}
         keyboardType="numeric"
-        placeholder={String(
-          truck.nextOilChangeMileage
-        )}
+        placeholder="Ex : 130000"
         placeholderTextColor="#64748B"
       />
 
@@ -178,6 +245,8 @@ export default function EditTruckScreen({
       </Text>
 
       <View style={styles.statusContainer}>
+
+        {/* EN SERVICE */}
         <TouchableOpacity
           style={[
             styles.statusButton,
@@ -199,6 +268,7 @@ export default function EditTruckScreen({
           </Text>
         </TouchableOpacity>
 
+        {/* À L'ARRÊT */}
         <TouchableOpacity
           style={[
             styles.statusButton,
@@ -220,6 +290,7 @@ export default function EditTruckScreen({
           </Text>
         </TouchableOpacity>
 
+        {/* EN MAINTENANCE */}
         <TouchableOpacity
           style={[
             styles.statusButton,
@@ -240,6 +311,7 @@ export default function EditTruckScreen({
             En maintenance
           </Text>
         </TouchableOpacity>
+
       </View>
 
       {/* ENREGISTRER */}
