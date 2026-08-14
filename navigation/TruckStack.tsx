@@ -1,11 +1,19 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
 import TruckListScreen from "../screens/TruckListScreen";
 import TruckDetailScreen from "../screens/TruckDetailScreen";
+import EditTruckScreen from "../screens/EditTruckScreen";
+
 import { TruckStatus } from "../types/Truck";
 
 export type TruckStackParamList = {
   TruckList: undefined;
+
   TruckDetail: {
+    truckId: string;
+  };
+
+  EditTruck: {
     truckId: string;
   };
 };
@@ -14,24 +22,43 @@ type Props = {
   status: TruckStatus;
 };
 
-const Stack = createNativeStackNavigator<TruckStackParamList>();
+const Stack =
+  createNativeStackNavigator<TruckStackParamList>();
 
 export default function TruckStack({ status }: Props) {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="TruckList">
+      {/* LISTE DES CAMIONS */}
+      <Stack.Screen
+        name="TruckList"
+        options={{
+          title: status,
+        }}
+      >
         {(props) => (
           <TruckListScreen
-            navigation={props.navigation}
+            {...props}
             status={status}
           />
         )}
       </Stack.Screen>
 
+      {/* DETAIL DU CAMION */}
       <Stack.Screen
         name="TruckDetail"
         component={TruckDetailScreen}
-        options={{ title: "Détail du camion" }}
+        options={{
+          title: "Détail du camion",
+        }}
+      />
+
+      {/* MODIFIER LE CAMION */}
+      <Stack.Screen
+        name="EditTruck"
+        component={EditTruckScreen}
+        options={{
+          title: "Modifier le camion",
+        }}
       />
     </Stack.Navigator>
   );

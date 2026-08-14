@@ -33,7 +33,7 @@ export default function TruckCard({ truck, onPress }: Props) {
       onPress={onPress}
       activeOpacity={0.8}
     >
-      {/* Header */}
+    
       <View style={styles.header}>
         <View style={styles.truckInfo}>
           <View style={styles.iconContainer}>
@@ -57,7 +57,7 @@ export default function TruckCard({ truck, onPress }: Props) {
           </View>
         </View>
 
-        {/* Status */}
+      
         <View
           style={[
             styles.statusBadge,
@@ -82,7 +82,7 @@ export default function TruckCard({ truck, onPress }: Props) {
         </View>
       </View>
 
-      {/* Informations */}
+   
       <View style={styles.infoBox}>
         <View style={styles.infoItem}>
           <Ionicons
@@ -128,7 +128,6 @@ export default function TruckCard({ truck, onPress }: Props) {
         </View>
       </View>
 
-      {/* Vidange */}
       <View
         style={[
           styles.oilBadge,
@@ -153,7 +152,6 @@ export default function TruckCard({ truck, onPress }: Props) {
         </Text>
       </View>
 
-      {/* Detail */}
       <View style={styles.detailRow}>
         <Text style={styles.detailText}>
           Détails
