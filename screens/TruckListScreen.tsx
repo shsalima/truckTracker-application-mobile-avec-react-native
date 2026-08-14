@@ -14,7 +14,6 @@ import { TruckStackParamList } from "../navigation/TruckStack";
 
 type Props = {
   status: TruckStatus;
-
   navigation: NativeStackNavigationProp<
     TruckStackParamList,
     "TruckList"
@@ -27,7 +26,6 @@ export default function TruckListScreen({
 }: Props) {
   const { trucks } = useTrucks();
 
-  // Filtrer les camions selon le statut
   const filteredTrucks = trucks.filter(
     (truck) => truck.status === status
   );
@@ -37,61 +35,41 @@ export default function TruckListScreen({
 
       {/* HEADER */}
       <View style={styles.header}>
-        <View>
-          <Text style={styles.title}>
-            {status}
-          </Text>
+        <Text style={styles.title}>
+          {status}
+        </Text>
 
-          <Text style={styles.count}>
-            {filteredTrucks.length} camion
-            {filteredTrucks.length > 1 ? "s" : ""}
-          </Text>
-        </View>
-
-        {/* BOUTON AJOUTER */}
         <TouchableOpacity
           style={styles.addButton}
           onPress={() =>
             navigation.navigate("AddTruck")
           }
         >
-          <Text style={styles.addButtonText}>
+          <Text style={styles.addText}>
             +
           </Text>
         </TouchableOpacity>
       </View>
 
       {/* LISTE */}
-      <View style={styles.list}>
+      {filteredTrucks.length === 0 ? (
+        <Text style={styles.emptyText}>
+          Aucun camion dans cette catégorie.
+        </Text>
+      ) : (
+        filteredTrucks.map((truck) => (
+          <TruckCard
+            key={truck.id}
+            truck={truck}
+            onPress={() =>
+              navigation.navigate("TruckDetail", {
+                truckId: truck.id,
+              })
+            }
+          />
+        ))
+      )}
 
-        {filteredTrucks.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyTitle}>
-              Aucun camion
-            </Text>
-
-            <Text style={styles.emptyText}>
-              Aucun camion dans ce statut.
-            </Text>
-          </View>
-        ) : (
-          filteredTrucks.map((truck) => (
-            <TruckCard
-              key={truck.id}
-              truck={truck}
-              onPress={() =>
-                navigation.navigate(
-                  "TruckDetail",
-                  {
-                    truckId: truck.id,
-                  }
-                )
-              }
-            />
-          ))
-        )}
-
-      </View>
     </View>
   );
 }
@@ -105,58 +83,37 @@ const styles = StyleSheet.create({
 
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 20,
   },
 
   title: {
     color: "#F8FAFC",
     fontSize: 24,
-    fontWeight: "800",
-  },
-
-  count: {
-    color: "#64748B",
-    fontSize: 12,
-    marginTop: 4,
+    fontWeight: "bold",
   },
 
   addButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     backgroundColor: "#2563EB",
     justifyContent: "center",
     alignItems: "center",
   },
 
-  addButtonText: {
+  addText: {
     color: "#FFFFFF",
     fontSize: 28,
     fontWeight: "400",
     lineHeight: 30,
   },
 
-  list: {
-    flex: 1,
-  },
-
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  emptyTitle: {
-    color: "#F8FAFC",
-    fontSize: 18,
-    fontWeight: "700",
-    marginBottom: 6,
-  },
-
   emptyText: {
     color: "#64748B",
-    fontSize: 12,
+    textAlign: "center",
+    marginTop: 40,
+    fontSize: 14,
   },
 });

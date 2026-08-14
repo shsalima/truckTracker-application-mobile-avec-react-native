@@ -13,7 +13,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { useTrucks } from "../context/TrucksContext";
 import { TruckStackParamList } from "../navigation/TruckStack";
-import { TruckStatus } from "../types/Truck";
+import { TruckStatus, Truck } from "../types/Truck";
 
 type Props = NativeStackScreenProps<
   TruckStackParamList,
@@ -25,32 +25,24 @@ export default function AddTruckScreen({
 }: Props) {
   const { addTruck } = useTrucks();
 
-  const [plateNumber, setPlateNumber] =
-    useState("");
-
-  const [color, setColor] =
-    useState("");
-
-  const [fuelType, setFuelType] =
-    useState("");
-
-  const [mileage, setMileage] =
-    useState("");
-
+  const [plateNumber, setPlateNumber] = useState("");
+  const [color, setColor] = useState("");
+  const [fuelType, setFuelType] = useState("");
+  const [mileage, setMileage] = useState("");
   const [nextOilChangeMileage, setNextOilChangeMileage] =
     useState("");
 
   const [status, setStatus] =
     useState<TruckStatus>("En service");
 
-  const handleAddTruck = () => {
-    // Vérifier les champs obligatoires
+  const handleAdd = () => {
+    // 1. Vérifier les champs
     if (
-      !plateNumber.trim() ||
-      !color.trim() ||
-      !fuelType.trim() ||
-      !mileage.trim() ||
-      !nextOilChangeMileage.trim()
+      plateNumber.trim() === "" ||
+      color.trim() === "" ||
+      fuelType.trim() === "" ||
+      mileage.trim() === "" ||
+      nextOilChangeMileage.trim() === ""
     ) {
       Alert.alert(
         "Erreur",
@@ -60,27 +52,26 @@ export default function AddTruckScreen({
       return;
     }
 
-    // Convertir les kilométrages en nombres
+    // 2. Convertir les kilomètres
     const mileageNumber = Number(mileage);
-
     const nextOilNumber = Number(
       nextOilChangeMileage
     );
 
-    // Vérifier que les valeurs sont numériques
+    // 3. Vérifier les nombres
     if (
-      Number.isNaN(mileageNumber) ||
-      Number.isNaN(nextOilNumber)
+      !Number.isFinite(mileageNumber) ||
+      !Number.isFinite(nextOilNumber)
     ) {
       Alert.alert(
         "Erreur",
-        "Le kilométrage doit être numérique."
+        "Le kilométrage doit être un nombre."
       );
 
       return;
     }
 
-    // Vérifier que les kilométrages sont positifs
+    // 4. Vérifier les valeurs négatives
     if (
       mileageNumber < 0 ||
       nextOilNumber < 0
@@ -93,18 +84,18 @@ export default function AddTruckScreen({
       return;
     }
 
-    // Vérifier la prochaine vidange
-    if (nextOilNumber <= mileageNumber) {
+    // 5. Vérifier la vidange
+    if (nextOilNumber < mileageNumber) {
       Alert.alert(
         "Erreur",
-        "Le kilométrage de la prochaine vidange doit être supérieur au kilométrage actuel."
+        "La prochaine vidange doit être supérieure ou égale au kilométrage actuel."
       );
 
       return;
     }
 
-    // Créer le nouveau camion
-    const newTruck = {
+    // 6. Créer le camion
+    const newTruck: Truck = {
       id: Date.now().toString(),
       plateNumber: plateNumber.trim(),
       color: color.trim(),
@@ -114,13 +105,13 @@ export default function AddTruckScreen({
       nextOilChangeMileage: nextOilNumber,
     };
 
-    // Ajouter le camion dans le Context
+    // 7. Ajouter le camion
     addTruck(newTruck);
 
-    // Message de confirmation
+    // 8. Confirmation
     Alert.alert(
       "Succès",
-      "Le camion a été ajouté.",
+      "Le camion a été ajouté avec succès.",
       [
         {
           text: "OK",
@@ -136,21 +127,15 @@ export default function AddTruckScreen({
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
     >
-      {/* TITRE */}
-
       <Text style={styles.title}>
         Ajouter un camion
       </Text>
 
-      <Text style={styles.subtitle}>
-        Remplissez les informations du nouveau camion.
-      </Text>
-
       {/* IMMATRICULATION */}
-
       <Text style={styles.label}>
-        Immatriculation *
+        Immatriculation
       </Text>
 
       <TextInput
@@ -163,9 +148,8 @@ export default function AddTruckScreen({
       />
 
       {/* COULEUR */}
-
       <Text style={styles.label}>
-        Couleur *
+        Couleur
       </Text>
 
       <TextInput
@@ -177,9 +161,8 @@ export default function AddTruckScreen({
       />
 
       {/* CARBURANT */}
-
       <Text style={styles.label}>
-        Type de carburant *
+        Type de carburant
       </Text>
 
       <TextInput
@@ -191,54 +174,48 @@ export default function AddTruckScreen({
       />
 
       {/* KILOMETRAGE */}
-
       <Text style={styles.label}>
-        Kilométrage initial *
+        Kilométrage initial
       </Text>
 
       <TextInput
         style={styles.input}
         value={mileage}
         onChangeText={setMileage}
+        keyboardType="numeric"
         placeholder="Ex : 120000"
         placeholderTextColor="#64748B"
-        keyboardType="numeric"
       />
 
       {/* PROCHAINE VIDANGE */}
-
       <Text style={styles.label}>
-        Prochaine vidange *
+        Prochaine vidange
       </Text>
 
       <TextInput
         style={styles.input}
         value={nextOilChangeMileage}
         onChangeText={setNextOilChangeMileage}
+        keyboardType="numeric"
         placeholder="Ex : 130000"
         placeholderTextColor="#64748B"
-        keyboardType="numeric"
       />
 
       {/* STATUT */}
-
       <Text style={styles.label}>
-        Statut initial *
+        Statut
       </Text>
 
       <View style={styles.statusContainer}>
 
         {/* EN SERVICE */}
-
         <TouchableOpacity
           style={[
             styles.statusButton,
             status === "En service" &&
               styles.activeStatus,
           ]}
-          onPress={() =>
-            setStatus("En service")
-          }
+          onPress={() => setStatus("En service")}
         >
           <Text
             style={[
@@ -252,16 +229,13 @@ export default function AddTruckScreen({
         </TouchableOpacity>
 
         {/* À L'ARRÊT */}
-
         <TouchableOpacity
           style={[
             styles.statusButton,
             status === "À l'arrêt" &&
               styles.activeStatus,
           ]}
-          onPress={() =>
-            setStatus("À l'arrêt")
-          }
+          onPress={() => setStatus("À l'arrêt")}
         >
           <Text
             style={[
@@ -275,7 +249,6 @@ export default function AddTruckScreen({
         </TouchableOpacity>
 
         {/* EN MAINTENANCE */}
-
         <TouchableOpacity
           style={[
             styles.statusButton,
@@ -299,28 +272,15 @@ export default function AddTruckScreen({
 
       </View>
 
-      {/* BOUTON AJOUTER */}
-
+      {/* AJOUTER */}
       <TouchableOpacity
         style={styles.addButton}
-        onPress={handleAddTruck}
+        onPress={handleAdd}
       >
         <Text style={styles.addButtonText}>
           Ajouter le camion
         </Text>
       </TouchableOpacity>
-
-      {/* BOUTON ANNULER */}
-
-      <TouchableOpacity
-        style={styles.cancelButton}
-        onPress={() => navigation.goBack()}
-      >
-        <Text style={styles.cancelButtonText}>
-          Annuler
-        </Text>
-      </TouchableOpacity>
-
     </ScrollView>
   );
 }
@@ -338,27 +298,21 @@ const styles = StyleSheet.create({
 
   title: {
     color: "#F8FAFC",
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "800",
-    marginBottom: 6,
-  },
-
-  subtitle: {
-    color: "#64748B",
-    fontSize: 12,
-    marginBottom: 20,
+    marginBottom: 25,
   },
 
   label: {
     color: "#CBD5E1",
     fontSize: 12,
     fontWeight: "600",
-    marginTop: 12,
     marginBottom: 7,
+    marginTop: 12,
   },
 
   input: {
-    height: 46,
+    height: 45,
     backgroundColor: "#111B2E",
     borderWidth: 1,
     borderColor: "#26344D",
@@ -377,7 +331,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#26344D",
     borderRadius: 9,
-    padding: 13,
+    padding: 12,
   },
 
   activeStatus: {
@@ -397,8 +351,8 @@ const styles = StyleSheet.create({
   },
 
   addButton: {
-    height: 48,
     backgroundColor: "#2563EB",
+    height: 48,
     borderRadius: 9,
     justifyContent: "center",
     alignItems: "center",
@@ -409,22 +363,5 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 13,
     fontWeight: "700",
-  },
-
-  cancelButton: {
-    height: 45,
-    backgroundColor: "#111B2E",
-    borderWidth: 1,
-    borderColor: "#26344D",
-    borderRadius: 9,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 10,
-  },
-
-  cancelButtonText: {
-    color: "#CBD5E1",
-    fontSize: 12,
-    fontWeight: "600",
   },
 });
